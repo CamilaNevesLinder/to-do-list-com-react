@@ -3,4 +3,6 @@
   font-weight: 600;
   color: antiquewhite;
   gap: 0.5rem;
+  display: flex;
+  flex-direction: row;
 }
