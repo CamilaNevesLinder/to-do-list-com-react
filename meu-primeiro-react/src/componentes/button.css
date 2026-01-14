@@ -1,0 +1,11 @@
+.primary-button {
+  background-color: pink;
+  max-width: 5rem;
+  padding: 0.5rem;
+  border: none;
+}
+
+.primary-button:hover {
+  background-color: palevioletred;
+  border: none;
+}
