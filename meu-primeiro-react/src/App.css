@@ -16,3 +16,9 @@
   border-radius: 0.8rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
+
+.div-icons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}

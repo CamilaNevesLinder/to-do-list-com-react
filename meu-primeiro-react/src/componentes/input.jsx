@@ -1,12 +1,14 @@
 import { forwardRef } from "react";
 import "./input.css";
 
-export const InputText = forwardRef(({ className = "inputText" }, ref) => {
+export const InputText = forwardRef(({ className, value, onChange }, ref) => {
   return (
     <input
       ref={ref}
       type="text"
       className={className}
+      value={value}
+      onChange={onChange}
       placeholder="Crie uma tarefa..."
     />
   );
