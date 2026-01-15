@@ -13,18 +13,41 @@ import { Modal } from "./componentes/modal";
 function App() {
   const inputRef = useRef(null);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editValue, setEditValue] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const fixedTasks = [
+    {
+      id: "fixed-1",
+      text: "tarefa fixa 1",
+      done: false,
+      date: new Date().toLocaleDateString("pt-BR"),
+    },
+    {
+      id: "fixed-2",
+      text: "tarefa fixa 2",
+      done: false,
+      date: new Date().toLocaleDateString("pt-BR"),
+    },
+  ];
 
-  const [task, setTask] = useState(() => {
+  const [tasks, setTask] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
-    return savedTasks ? JSON.parse(savedTasks) : [];
+    const userTasks = savedTasks ? JSON.parse(savedTasks) : []; // se houver algo no localStorage com a chave tasks, o savedTasks sera uma string com esse valor
+
+    const userTaskIds = userTasks.map((task) => task.id);
+
+    const missingFixedTasks = fixedTasks.filter(
+      (fixed) => !userTaskIds.includes(fixed.id)
+    );
+
+    return [...missingFixedTasks, ...userTasks];
   });
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(task));
-  }, [task]);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editValue, setEditValue] = useState("");
+  const [editId, setEditId] = useState(null);
 
   function saveTask() {
     const value = inputRef.current.value;
@@ -36,57 +59,33 @@ function App() {
       year: "numeric",
     });
 
-    setTask([...task, { text: value, done: false, date: today }]);
+    setTask([...tasks, { text: value, done: false, date: today }]);
     inputRef.current.value = "";
   }
 
-  function toggleCheck(index) {
-    const newTasks = [...task];
-    newTasks[index].done = !newTasks[index].done;
+  function toggleCheck(id) {
+    const newTasks = [...tasks];
+    newTasks[id].done = !newTasks[id].done;
     setTask(newTasks);
   }
 
-  function deleteTask(indexToDelete) {
-    const newTasks = task.filter((_, index) => index !== indexToDelete);
+  function deleteTask(idToDelete) {
+    const newTasks = tasks.filter((_, id) => id !== idToDelete);
     setTask(newTasks);
   }
 
-  function openEditModal(item, index) {
+  function openEditModal(item, id) {
     setEditValue(item.text);
-    setEditIndex(index);
+    setEditId(id);
     setIsModalOpen(true);
   }
 
   function saveEdit() {
-    const updateTasks = [...task];
-    updateTasks[editIndex] = { ...updateTasks[editIndex], text: editValue };
+    const updateTasks = [...tasks];
+    updateTasks[editId] = { ...updateTasks[editId], text: editValue };
     setTask(updateTasks);
     setIsModalOpen(false);
   }
-
-  let nextId = 1;
-
-  function creatTasks() {
-    return {
-      id: nextId++,
-      text: "tarefa fixa ",
-      date: new Date().toLocaleDateString("pt-BR"),
-      completed: false,
-      isDefault: true,
-    };
-  }
-
-  function hasAtLeastTwoTasks() {
-    if (task.length === 0) {
-      setTask([creatTasks(), creatTasks()]);
-    } else if (task.length === 1) {
-      setTask([...task, creatTasks()]);
-    }
-  }
-
-  useEffect(() => {
-    hasAtLeastTwoTasks();
-  }, []);
 
   return (
     <div className="box-task">
@@ -101,32 +100,32 @@ function App() {
       </div>
 
       <TaskList>
-        {task.map((item, index) => (
-          <ItemList key={index}>
+        {tasks.map((task, id) => (
+          <ItemList key={id}>
             <input
               type="checkbox"
-              checked={item.done}
-              onChange={() => toggleCheck(index)}
+              checked={task.done}
+              onChange={() => toggleCheck(id)}
             />
             <div className="div-date-under-task">
               <span
                 style={{
-                  textDecoration: item.done ? "line-through" : "none",
+                  textDecoration: task.done ? "line-through" : "none",
                 }}
               >
-                {item.text}
+                {task.text}
               </span>
-              <small className="task-date">{item.date}</small>
+              <small className="task-date">{task.date}</small>
             </div>
 
             <div className="div-icons">
-              <IconDelete onClick={() => deleteTask(index)}>
+              <IconDelete onClick={() => deleteTask(id)}>
                 <img
                   src="meu-primeiro-react/public/delete.png"
                   alt="icone de deletar"
                 />
               </IconDelete>
-              <IconEdit onClick={() => openEditModal(item, index)}>
+              <IconEdit onClick={() => openEditModal(task, id)}>
                 <img
                   src="meu-primeiro-react/public/pen.png"
                   alt="icone de editar"
