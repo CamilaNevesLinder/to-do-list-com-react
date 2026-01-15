@@ -30,7 +30,13 @@ function App() {
     const value = inputRef.current.value;
     if (value.trim() === "") return;
 
-    setTask([...task, { text: value, done: false }]);
+    const today = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    setTask([...task, { text: value, done: false, date: today }]);
     inputRef.current.value = "";
   }
 
@@ -58,6 +64,30 @@ function App() {
     setIsModalOpen(false);
   }
 
+  let nextId = 1;
+
+  function creatTasks() {
+    return {
+      id: nextId++,
+      text: "tarefa fixa ",
+      date: new Date().toLocaleDateString("pt-BR"),
+      completed: false,
+      isDefault: true,
+    };
+  }
+
+  function hasAtLeastTwoTasks() {
+    if (task.length === 0) {
+      setTask([creatTasks(), creatTasks()]);
+    } else if (task.length === 1) {
+      setTask([...task, creatTasks()]);
+    }
+  }
+
+  useEffect(() => {
+    hasAtLeastTwoTasks();
+  }, []);
+
   return (
     <div className="box-task">
       <Title className="primary-title">To-do list</Title>
@@ -78,13 +108,17 @@ function App() {
               checked={item.done}
               onChange={() => toggleCheck(index)}
             />
-            <span
-              style={{
-                textDecoration: item.done ? "line-through" : "none",
-              }}
-            >
-              {item.text}
-            </span>
+            <div className="div-date-under-task">
+              <span
+                style={{
+                  textDecoration: item.done ? "line-through" : "none",
+                }}
+              >
+                {item.text}
+              </span>
+              <small className="task-date">{item.date}</small>
+            </div>
+
             <div className="div-icons">
               <IconDelete onClick={() => deleteTask(index)}>
                 <img
