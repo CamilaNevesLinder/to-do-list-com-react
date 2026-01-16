@@ -87,6 +87,10 @@ function App() {
     setIsModalOpen(false);
   }
 
+  function resetList() {
+    setTask([]);
+  }
+
   return (
     <div className="box-task">
       <Title className="primary-title">To-do list</Title>
@@ -135,6 +139,9 @@ function App() {
           </ItemList>
         ))}
       </TaskList>
+      <Button className="btn-reset-list" onClick={resetList}>
+        Reset
+      </Button>
 
       <Modal
         isOpen={isModalOpen}

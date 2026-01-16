@@ -32,3 +32,12 @@
   display: flex;
   flex-direction: column;
 }
+
+.btn-reset-list {
+  background-color: palevioletred;
+  border: none;
+}
+
+.btn-reset-list:hover {
+  background-color: pink;
+}
