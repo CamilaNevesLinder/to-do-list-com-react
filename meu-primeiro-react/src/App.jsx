@@ -19,12 +19,14 @@ function App() {
       text: "tarefa fixa 1",
       done: false,
       date: new Date().toLocaleDateString("pt-BR"),
+      fixed: true,
     },
     {
       id: "fixed-2",
       text: "tarefa fixa 2",
       done: false,
       date: new Date().toLocaleDateString("pt-BR"),
+      fixed: true,
     },
   ];
 
@@ -59,7 +61,16 @@ function App() {
       year: "numeric",
     });
 
-    setTask([...tasks, { text: value, done: false, date: today }]);
+    setTask([
+      ...tasks,
+      {
+        text: value,
+        done: false,
+        date: today,
+        fixed: false,
+        id: crypto.randomUUID(),
+      },
+    ]);
     inputRef.current.value = "";
   }
 
@@ -88,7 +99,8 @@ function App() {
   }
 
   function resetList() {
-    setTask([]);
+    const onlyFixedTasks = tasks.filter((task) => task.fixed);
+    setTask(onlyFixedTasks);
   }
 
   return (
